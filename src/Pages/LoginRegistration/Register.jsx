@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Swal from "sweetalert2";
+import useAuth from "../../Hooks/useAuth";
+import loader from "../../assets/Rhombus.gif";
 
 const Register = () => {
     const [show, setShow] = useState(false);
+    const [error, setError] = useState(false);
+    const [wait, setWait] = useState(false);
+    const { createUser, updateUser, logout } = useAuth();
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -16,11 +23,11 @@ const Register = () => {
     }`;
 
     const onSubmit = (data) => {
-        const { name, email, password, photo, confirmPass, gender, phone } =
-            data;
+        const { name, email, password, photo, confirmPass, idNumber } = data;
 
         if (password === confirmPass) {
             const formData = new FormData();
+            setWait(true);
             formData.append("image", data.image[0]);
             fetch(imageHostingUrl, {
                 method: "POST",
@@ -34,9 +41,8 @@ const Register = () => {
                             name,
                             email,
                             photoURL: imgUrl,
-                            gender,
-                            phone,
-                            role: "Student",
+                            idNumber,
+                            role: "police",
                         };
 
                         createUser(email, password)
@@ -60,14 +66,20 @@ const Register = () => {
                                             icon: "success",
                                             title: "User Created Successfully Please Login to continue",
                                             showConfirmButton: false,
-                                            timer: 1500,
+                                            timer: 3200,
                                         });
+
+                                        setError("");
+                                        setWait(false);
 
                                         logout()
                                             .then((result) => {
                                                 navigate("/login");
                                             })
-                                            .catch((error) => {});
+                                            .catch((error) => {
+                                                setError(error.message);
+                                                setWait(false);
+                                            });
                                     })
                                     .catch((error) => {
                                         console.log(error.message);
@@ -76,6 +88,8 @@ const Register = () => {
                             })
                             .catch((error) => {
                                 console.log(error.message);
+                                setWait(false);
+                                setError(error.message);
                             });
                     }
                 });
@@ -84,21 +98,40 @@ const Register = () => {
                 icon: "error",
                 title: "Password is not matching",
                 showConfirmButton: false,
-                timer: 1500,
+                timer: 2000,
             });
             console.log(savedUser);
             return;
         }
         console.log(data);
     };
+
+    if (wait) {
+        return (
+            <div className="absolute z-30 top-[60px] left-0 w-full bg-white min-h-[91vh] flex flex-col items-center justify-center">
+                <h1 className="text-2xl md:text-3xl">
+                    Please Wait few seconds.
+                </h1>
+                <p className="text-xl">Registering your profile.</p>
+                <img src={loader} alt="" />
+            </div>
+        );
+    }
+
+    // Scroll to top
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+    });
     return (
         <div>
             <div className="w-full min-h-screen px-4 max max-w-4xl mx-auto flex items-center justify-center">
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="w-full max-w-sm lg:max-w-3xl mx-auto  px-4 pb-4 rounded-md pt-0 shadow-2xl my-8"
+                    className="w-full max-w-sm lg:max-w-3xl mx-auto  px-4 pb-8 rounded-md pt-0 shadow-2xl my-8"
                 >
-                    <div className="w-full lg:max-w-3xl lg:flex justify-between gap-4">
+                    <div className="w-full lg:max-w-3xl lg:flex justify-between gap-4 pt-4">
                         <div className="form-control w-full">
                             <label className="label">
                                 <span className="label-text">Name</span>
@@ -171,7 +204,7 @@ const Register = () => {
                             </label>
                             <input
                                 type="text"
-                                placeholder="password"
+                                placeholder="id"
                                 className="input input-bordered input-accent w-full"
                                 required
                                 {...register("idNumber")}
@@ -190,20 +223,25 @@ const Register = () => {
                         </div>
                     </div>
 
-                    <label className="">
-                        <Link
-                            to={"/login"}
-                            className="label-text-alt link link-hover text-warning"
-                        >
-                            Login
-                        </Link>
-                    </label>
-                    <div className="form-control w-full mt-6">
+                    <div className="form-control w-full ">
                         <input
                             type="submit"
                             value={"Register"}
-                            className="input input-bordered w-full hover:bg-transparent hover:text-info bg-info text-white my-7 input-info"
+                            className="input input-bordered w-full hover:bg-transparent hover:text-info bg-info text-white my-7 input-info cursor-pointer"
                         />
+                    </div>
+                    <div>
+                        <p className="text-xs text-red-600 font-semibold text-center pb-2">
+                            {error}
+                        </p>
+                    </div>
+                    <div className="w-full flex justify-center">
+                        <Link
+                            to={"/login"}
+                            className="text-sm hover:underline text-warning font-medium"
+                        >
+                            Login
+                        </Link>
                     </div>
                 </form>
             </div>

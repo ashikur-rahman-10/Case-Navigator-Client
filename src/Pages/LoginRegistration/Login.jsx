@@ -5,9 +5,13 @@ import "react-tabs/style/react-tabs.css";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import useAuth from "../../Hooks/useAuth";
+import Swal from "sweetalert2";
 
 const Login = () => {
     const [show, setShow] = useState(false);
+    const [error, setError] = useState(false);
+    const { loginWithPass, passwordReset } = useAuth();
     const {
         register,
         handleSubmit,
@@ -15,9 +19,61 @@ const Login = () => {
     } = useForm();
 
     const onSubmit = (data) => {
-        const { email, password } = data;
-        console.log(password);
+        loginWithPass(data.email, data.password)
+            .then(async (result) => {
+                setError("");
+                Swal.fire({
+                    icon: "success",
+                    title: "User Login Successfully",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+                console.log({ result });
+                setError("");
+            })
+            .catch((error) => {
+                setError(error.message);
+                console.log(error.message);
+            });
     };
+
+    const handleForgetPass = () => {
+        Swal.fire({
+            title: "Submit your email",
+            input: "email",
+            inputAttributes: {
+                autocapitalize: "off",
+            },
+            showCancelButton: true,
+            confirmButtonText: "Submit",
+            showLoaderOnConfirm: true,
+            preConfirm: (email) => {
+                passwordReset(email)
+                    .then((result) => {
+                        Swal.fire({
+                            title: "Please check your Inbox!",
+                            text: "We sent you a Password reset email",
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            title: "Please check your email!",
+                            text: "You provide a wrong email.",
+                        });
+                    });
+            },
+            allowOutsideClick: () => !Swal.isLoading(),
+        }).then((result) => {
+            if (result.isConfirmed) {
+            }
+        });
+    };
+    // Scroll to top
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+    });
     return (
         <div>
             <div className="w-full">
@@ -71,10 +127,18 @@ const Login = () => {
                                 </span>
                             </div>
                             <label className="label">
-                                <p className="label-text-alt link link-hover">
+                                <p
+                                    onClick={handleForgetPass}
+                                    className="label-text-alt link link-hover"
+                                >
                                     Forgot password?
                                 </p>
                             </label>
+                            <div>
+                                <p className="text-xs text-red-600 font-semibold">
+                                    {error}
+                                </p>
+                            </div>
                             <label className="">
                                 <Link
                                     to={"/register"}

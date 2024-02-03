@@ -1,8 +1,22 @@
 import React from "react";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
+import useAuth from "../../Hooks/useAuth";
+import CustomLoader from "../CustomLoader/CustomLoader";
 
 const NavigationBar = () => {
+    const { user, loading, logout } = useAuth();
+    if (loading) {
+        return <CustomLoader></CustomLoader>;
+    }
+    const handleLogout = () => {
+        logout()
+            .then((result) => {
+                navigate("/");
+            })
+            .catch((error) => {});
+    };
+
     return (
         <div>
             <div className="navbar bg-base-100 w-full">
@@ -31,60 +45,82 @@ const NavigationBar = () => {
                             <li>
                                 <a>Item 1</a>
                             </li>
-                            <li>
-                                <a>Parent</a>
-                                <ul className="p-2">
-                                    <li>
-                                        <a>Submenu 1</a>
-                                    </li>
-                                    <li>
-                                        <a>Submenu 2</a>
-                                    </li>
-                                </ul>
-                            </li>
+
                             <li>
                                 <a>Item 3</a>
                             </li>
                         </ul>
                     </div>
-                    <a className="btn btn-ghost text-xl">
+                    <Link to={"/"} className="btn btn-ghost text-xl">
                         <img
                             className="lg:max-h-[40px] h-7"
                             src={logo}
                             alt=""
                         />
-                    </a>
+                    </Link>
                 </div>
                 <div className="navbar-center hidden lg:flex">
                     <ul className="menu menu-horizontal px-1">
                         <li>
                             <a>Item 1</a>
                         </li>
-                        <li tabIndex={0}>
-                            <details>
-                                <summary>Parent</summary>
-                                <ul className="p-2">
-                                    <li>
-                                        <a>Submenu 1</a>
-                                    </li>
-                                    <li>
-                                        <a>Submenu 2</a>
-                                    </li>
-                                </ul>
-                            </details>
-                        </li>
+
                         <li>
                             <a>Item 3</a>
                         </li>
                     </ul>
                 </div>
                 <div className="navbar-end pr-4">
-                    <Link
-                        to={"/login"}
-                        className="hover:bg-slate-50 hover:text-sky-600 px-2 py-1 rounded-lg"
-                    >
-                        Login
-                    </Link>
+                    {!user ? (
+                        <Link
+                            to={"/login"}
+                            className="hover:bg-slate-50 hover:text-sky-600 px-2 py-1 rounded-lg"
+                        >
+                            Login
+                        </Link>
+                    ) : (
+                        <span>
+                            <div className="dropdown dropdown-end">
+                                <div
+                                    tabIndex={0}
+                                    role="button"
+                                    className="btn btn-ghost btn-circle avatar"
+                                >
+                                    <div className="w-10 rounded-full border border-green-400">
+                                        <img
+                                            className="w-10"
+                                            src={user?.photoURL}
+                                        />
+                                    </div>
+                                </div>
+                                <ul
+                                    tabIndex={0}
+                                    className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-56"
+                                >
+                                    <span>
+                                        <div className="text-center">
+                                            <img
+                                                className="w-full"
+                                                src={user?.photoURL}
+                                                alt=""
+                                            />
+                                            <p className="text-center text-xl">
+                                                {user?.displayName}
+                                            </p>
+                                            <p>{user?.email}</p>
+                                            <p>ID No: {user?.idNumber}</p>
+                                        </div>
+                                    </span>
+                                    <button
+                                        onClick={handleLogout}
+                                        className=" btn btn-xs mt-2  hover:bg-red-300"
+                                    >
+                                        Logout
+                                    </button>
+                                </ul>
+                            </div>
+                        </span>
+                    )}
                 </div>
             </div>
         </div>
