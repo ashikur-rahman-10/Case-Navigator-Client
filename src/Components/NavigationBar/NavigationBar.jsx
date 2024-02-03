@@ -17,6 +17,33 @@ const NavigationBar = () => {
             .catch((error) => {});
     };
 
+    let navbarOptions;
+    navbarOptions = (
+        <>
+            {user ? (
+                <>
+                    <li>
+                        <Link to={"/create-case"}>Create Case</Link>
+                    </li>
+
+                    <li>
+                        <Link to={"/created-case"}>Created Cases</Link>
+                    </li>
+                </>
+            ) : (
+                <>
+                    <li>
+                        <a>Item 2</a>
+                    </li>
+
+                    <li>
+                        <a>Item 4</a>
+                    </li>
+                </>
+            )}
+        </>
+    );
+
     return (
         <div>
             <div className="navbar bg-base-100 w-full">
@@ -40,15 +67,9 @@ const NavigationBar = () => {
                         </label>
                         <ul
                             tabIndex={0}
-                            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+                            className="menu menu-sm dropdown-content  mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
                         >
-                            <li>
-                                <a>Item 1</a>
-                            </li>
-
-                            <li>
-                                <a>Item 3</a>
-                            </li>
+                            {navbarOptions}
                         </ul>
                     </div>
                     <Link to={"/"} className="btn btn-ghost text-xl">
@@ -60,14 +81,8 @@ const NavigationBar = () => {
                     </Link>
                 </div>
                 <div className="navbar-center hidden lg:flex">
-                    <ul className="menu menu-horizontal px-1">
-                        <li>
-                            <a>Item 1</a>
-                        </li>
-
-                        <li>
-                            <a>Item 3</a>
-                        </li>
+                    <ul className="menu menu-horizontal px-1 flex gap-2">
+                        {navbarOptions}
                     </ul>
                 </div>
                 <div className="navbar-end pr-4">

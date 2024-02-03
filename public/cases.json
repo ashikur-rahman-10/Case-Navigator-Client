@@ -1,0 +1,70 @@
+{
+    "Bike": [
+        {
+            "value": "noHelmet",
+            "label": "Riding without a helmet",
+            "fine": 100
+        },
+        {
+            "value": "recklessDriving",
+            "label": "Reckless driving",
+            "fine": 200
+        },
+        {
+            "value": "unauthorizedMod",
+            "label": "Unauthorized bike modifications",
+            "fine": 150
+        }
+    ],
+    "Car": [
+        {
+            "value": "speeding",
+            "label": "Speeding",
+            "fine": 120
+        },
+        {
+            "value": "runningRedLight",
+            "label": "Running red light",
+            "fine": 180
+        },
+        {
+            "value": "noSeatBelt",
+            "label": "Not wearing seat belt",
+            "fine": 90
+        }
+    ],
+    "Bus": [
+        {
+            "value": "overloading",
+            "label": "Overloading the bus",
+            "fine": 250
+        },
+        {
+            "value": "recklessDriving",
+            "label": "Reckless driving",
+            "fine": 200
+        },
+        {
+            "value": "noStopAtDesignatedStop",
+            "label": "Not stopping at designated bus stop",
+            "fine": 150
+        }
+    ],
+    "Truck": [
+        {
+            "value": "overloadedTruck",
+            "label": "Overloaded truck",
+            "fine": 300
+        },
+        {
+            "value": "cargoViolations",
+            "label": "Cargo transport violations",
+            "fine": 220
+        },
+        {
+            "value": "recklessDriving",
+            "label": "Reckless driving by truck driver",
+            "fine": 180
+        }
+    ]
+}
